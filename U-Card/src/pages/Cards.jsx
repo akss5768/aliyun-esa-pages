@@ -1,33 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useCards } from '../hooks/useCards';
-import { useCardTypes } from '../hooks/useCardTypes';
+import React, { useState } from 'react';
+import { useCardsLocalStorage } from '../hooks/useLocalStorage';
+import { useCardTypesLocalStorage } from '../hooks/useLocalStorage';
 import CardComponent from '../components/Card';
 import CardForm from '../components/CardForm';
-import { getCurrentUserId, ensureUserExists } from '../lib/supabase';
-import { Plus, Search, Filter } from 'lucide-react';
+import { Plus, Search, Filter, Upload, Download } from 'lucide-react';
 
 const Cards = () => {
-  const [userId, setUserId] = useState(null);
-  const { cards, loading, error, fetchCards, createCard, updateCard, deleteCard } = useCards(userId);
-  const { cardTypes } = useCardTypes();
+  const { cards, createCard, updateCard, deleteCard, exportCards, importCards } = useCardsLocalStorage();
+  const { cardTypes } = useCardTypesLocalStorage();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('');
-  
-  useEffect(() => {
-    const initializeUser = async () => {
-      try {
-        const id = await getCurrentUserId();
-        await ensureUserExists(id);
-        setUserId(id);
-      } catch (err) {
-        console.error('Failed to initialize user:', err);
-      }
-    };
-    
-    initializeUser();
-  }, []);
   
   const handleCreateCard = async (cardData) => {
     try {
@@ -57,37 +41,37 @@ const Cards = () => {
     }
   };
   
+  const handleExportCards = () => {
+    exportCards();
+  };
+  
+  const handleImportCards = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        importCards(importedData);
+        alert('卡牌导入成功！');
+      } catch (err) {
+        console.error('Failed to import cards:', err);
+        alert('导入失败：' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset file input
+    event.target.value = '';
+  };
+  
   const filteredCards = cards.filter(card => {
     const matchesSearch = card.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          card.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType ? card.type_id === filterType : true;
     return matchesSearch && matchesType;
   });
-  
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
-  
-  if (error) {
-    return (
-      <div className="bg-red-50 border-l-4 border-red-500 p-4 max-w-4xl mx-auto mt-8">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm text-red-700">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
   
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -96,7 +80,28 @@ const Cards = () => {
           <h1 className="text-3xl font-bold text-gray-900">我的卡牌库</h1>
           <p className="mt-2 text-gray-600">管理您的所有卡牌收藏</p>
         </div>
-        <div className="mt-4 md:mt-0">
+        <div className="mt-4 md:mt-0 flex space-x-2">
+          <button
+            onClick={() => document.getElementById('import-cards').click()}
+            className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <Upload className="h-4 w-4 mr-1" />
+            导入
+          </button>
+          <input
+            id="import-cards"
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={handleImportCards}
+          />
+          <button
+            onClick={handleExportCards}
+            className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <Download className="h-4 w-4 mr-1" />
+            导出
+          </button>
           <button
             onClick={() => setIsFormOpen(true)}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

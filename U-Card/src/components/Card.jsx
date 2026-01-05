@@ -28,7 +28,7 @@ const CardComponent = ({ card, onEdit, onDelete, onAddToGroup }) => {
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-bold text-lg truncate">{card.name}</h3>
           <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full whitespace-nowrap ml-2">
-            {card.card_types_60959?.name || '未知类型'}
+            {card.type_name || '未知类型'}
           </span>
         </div>
         

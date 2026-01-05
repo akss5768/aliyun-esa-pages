@@ -1,368 +1,294 @@
 import React, { useState, useEffect } from 'react';
-import { useCardTypes } from '../hooks/useCardTypes';
-import { useCardGroups } from '../hooks/useCardGroups';
-import { getCurrentUserId } from '../lib/supabase';
-import { Plus, Tag, X } from 'lucide-react';
+import { X, Image as ImageIcon, Tag, Plus, Trash2 } from 'lucide-react';
+import { useCardTypesLocalStorage } from '../hooks/useLocalStorage';
 import ImageUpload from './ImageUpload';
 
 const CardForm = ({ card, onSave, onCancel }) => {
-  const { cardTypes, loading: typesLoading } = useCardTypes();
-  const [userId, setUserId] = useState(null);
-  const { groups, loading: groupsLoading, createGroup } = useCardGroups(userId);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    type_id: '',
-    image_url: '',
-    back_image_url: '',
-    attributes: {},
-    tags: [],
-    group_id: ''
+  const { cardTypes } = useCardTypesLocalStorage();
+  const [name, setName] = useState('');
+  const [typeId, setTypeId] = useState('');
+  const [description, setDescription] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [backImageUrl, setBackImageUrl] = useState('');
+  const [attributes, setAttributes] = useState({
+    rarity: '',
+    power: '',
+    defense: '',
+    cost: ''
   });
+  const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState('');
-  const [newGroupName, setNewGroupName] = useState('');
-
-  useEffect(() => {
-    const initializeUser = async () => {
-      try {
-        const id = await getCurrentUserId();
-        setUserId(id);
-      } catch (err) {
-        console.error('Failed to get user ID:', err);
-      }
-    };
-    
-    initializeUser();
-  }, []);
-
+  const [groupId, setGroupId] = useState('');
+  
+  // Load card data if editing
   useEffect(() => {
     if (card) {
-      setFormData({
-        name: card.name || '',
-        description: card.description || '',
-        type_id: card.type_id || '',
-        image_url: card.image_url || '',
-        back_image_url: card.back_image_url || '',
-        attributes: card.attributes || {},
-        tags: card.tags || [],
-        group_id: card.group_id || ''
+      setName(card.name || '');
+      setTypeId(card.type_id || '');
+      setDescription(card.description || '');
+      setImageUrl(card.image_url || '');
+      setBackImageUrl(card.back_image_url || '');
+      setAttributes(card.attributes || {
+        rarity: '',
+        power: '',
+        defense: '',
+        cost: ''
       });
+      setTags(card.tags || []);
+      setGroupId(card.group_id || '');
+    } else {
+      // Reset form for new card
+      setName('');
+      setTypeId(cardTypes[0]?.id || '');
+      setDescription('');
+      setImageUrl('');
+      setBackImageUrl('');
+      setAttributes({
+        rarity: '',
+        power: '',
+        defense: '',
+        cost: ''
+      });
+      setTags([]);
+      setGroupId('');
     }
-  }, [card]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+  }, [card, cardTypes]);
+  
+  const handleAttributeChange = (attr, value) => {
+    setAttributes(prev => ({
       ...prev,
-      [name]: value
+      [attr]: value
     }));
   };
-
-  const handleAttributeChange = (key, value) => {
-    setFormData(prev => ({
-      ...prev,
-      attributes: {
-        ...prev.attributes,
-        [key]: value
-      }
-    }));
-  };
-
-  const handleImageChange = (field, url) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: url
-    }));
-  };
-
-  const addTag = () => {
-    if (newTag.trim() && !formData.tags.find(tag => tag.name === newTag.trim())) {
-      const tag = {
-        id: Date.now(),
+  
+  const handleAddTag = () => {
+    if (newTag.trim() && !tags.find(t => t.name === newTag.trim())) {
+      const newTagObj = {
+        id: Date.now().toString(),
         name: newTag.trim(),
-        color: '#94a3b8'
+        color: '#3b82f6' // Default blue color
       };
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, tag]
-      }));
+      setTags(prev => [...prev, newTagObj]);
       setNewTag('');
     }
   };
-
-  const removeTag = (tagId) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.filter(tag => tag.id !== tagId)
-    }));
+  
+  const handleRemoveTag = (tagId) => {
+    setTags(prev => prev.filter(t => t.id !== tagId));
   };
-
-  const createDefaultGroup = async () => {
-    try {
-      const defaultGroup = await createGroup({
-        name: '默认卡牌组',
-        description: '系统自动创建的默认卡牌组'
-      });
-      return defaultGroup.id;
-    } catch (err) {
-      console.error('Failed to create default group:', err);
-      return null;
-    }
-  };
-
-  const handleCreateGroup = async () => {
-    if (!newGroupName.trim()) return;
-    
-    try {
-      const newGroup = await createGroup({
-        name: newGroupName,
-        description: ''
-      });
-      
-      setFormData(prev => ({
-        ...prev,
-        group_id: newGroup.id
-      }));
-      
-      setNewGroupName('');
-    } catch (err) {
-      console.error('Failed to create group:', err);
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  
+  const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Ensure a group is selected or create default group
-    let groupId = formData.group_id;
-    if (!groupId) {
-      if (groups.length > 0) {
-        groupId = groups[0].id;
-      } else {
-        groupId = await createDefaultGroup();
-      }
-      
-      if (!groupId) {
-        alert('无法创建或选择卡牌组，请稍后重试');
-        return;
-      }
-    }
+    const cardData = {
+      name: name.trim(),
+      type_id: typeId,
+      type_name: cardTypes.find(t => t.id === typeId)?.name || '未知类型',
+      description: description.trim(),
+      image_url: imageUrl,
+      back_image_url: backImageUrl,
+      attributes,
+      tags,
+      group_id: groupId || null
+    };
     
-    onSave({
-      ...formData,
-      group_id: groupId
-    });
+    onSave(cardData);
   };
-
-  if (typesLoading || groupsLoading) {
-    return <div className="text-center py-8">加载中...</div>;
-  }
-
+  
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        {card ? '编辑卡牌' : '创建新卡牌'}
-      </h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Card Name */}
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">卡牌名称 *</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="输入卡牌名称"
-          />
-        </div>
-        
-        {/* Card Type */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">卡牌类型 *</label>
-          <select
-            name="type_id"
-            value={formData.type_id}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="">选择类型</option>
-            {cardTypes.map(type => (
-              <option key={type.id} value={type.id}>{type.name}</option>
-            ))}
-          </select>
-        </div>
-        
-        {/* Card Group */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">卡牌组 *</label>
-          <div className="flex">
-            <select
-              name="group_id"
-              value={formData.group_id}
-              onChange={handleChange}
-              required
-              className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">选择卡牌组</option>
-              {groups.map(group => (
-                <option key={group.id} value={group.id}>{group.name}</option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={() => document.getElementById('create-group-modal').classList.remove('hidden')}
-              className="bg-indigo-600 text-white px-3 py-2 rounded-r-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              新建
-            </button>
-          </div>
-        </div>
-        
-        {/* Rarity */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">稀有度</label>
-          <select
-            value={formData.attributes.rarity || ''}
-            onChange={(e) => handleAttributeChange('rarity', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            <option value="">选择稀有度</option>
-            <option value="普通">普通</option>
-            <option value="稀有">稀有</option>
-            <option value="史诗">史诗</option>
-            <option value="传说">传说</option>
-          </select>
-        </div>
-        
-        {/* Front Image */}
-        <div className="md:col-span-2">
-          <ImageUpload
-            label="正面图片"
-            value={formData.image_url}
-            onChange={(url) => handleImageChange('image_url', url)}
-            placeholder="输入图片URL或上传图片"
-          />
-        </div>
-        
-        {/* Back Image */}
-        <div className="md:col-span-2">
-          <ImageUpload
-            label="背面图片"
-            value={formData.back_image_url}
-            onChange={(url) => handleImageChange('back_image_url', url)}
-            placeholder="输入图片URL或上传图片"
-          />
-        </div>
-        
-        {/* Description */}
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">描述</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="输入卡牌描述"
-          />
-        </div>
-        
-        {/* Tags */}
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">标签</label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {formData.tags.map(tag => (
-              <span 
-                key={tag.id}
-                className="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm flex items-center"
-              >
-                <Tag className="h-3 w-3 mr-1" />
-                {tag.name}
-                <button 
-                  type="button" 
-                  onClick={() => removeTag(tag.id)}
-                  className="ml-1 text-indigo-600 hover:text-indigo-800"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </span>
-            ))}
-          </div>
-          <div className="flex">
-            <input
-              type="text"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-              className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="添加标签"
-            />
-            <button 
-              type="button" 
-              onClick={addTag}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-r-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center"
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <div className="flex justify-end space-x-3">
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">
+          {card ? '编辑卡牌' : '创建新卡牌'}
+        </h2>
         <button
-          type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="text-gray-400 hover:text-gray-500"
         >
-          取消
-        </button>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        >
-          保存卡牌
+          <X className="h-6 w-6" />
         </button>
       </div>
       
-      {/* Create Group Modal */}
-      <div id="create-group-modal" className="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg max-w-md w-full p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">创建新卡牌组</h2>
-          
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Basic Info */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">基本信息</h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">组名 *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">卡牌名称 *</label>
               <input
                 type="text"
-                value={newGroupName}
-                onChange={(e) => setNewGroupName(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder="输入组名"
+                placeholder="输入卡牌名称"
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">卡牌类型 *</label>
+              <select
+                value={typeId}
+                onChange={(e) => setTypeId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+              >
+                {cardTypes.map(type => (
+                  <option key={type.id} value={type.id}>{type.name}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">描述</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="输入卡牌描述"
               />
             </div>
           </div>
-          
-          <div className="mt-6 flex justify-end space-x-3">
-            <button
-              onClick={() => document.getElementById('create-group-modal').classList.add('hidden')}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              取消
-            </button>
-            <button
-              onClick={handleCreateGroup}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              创建
-            </button>
+        </div>
+        
+        {/* Images */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">卡牌图片</h3>
+          <div className="space-y-4">
+            <div>
+              <ImageUpload
+                label="正面图片"
+                value={imageUrl}
+                onChange={setImageUrl}
+                placeholder="输入图片URL或上传图片"
+              />
+            </div>
+            
+            <div>
+              <ImageUpload
+                label="背面图片"
+                value={backImageUrl}
+                onChange={setBackImageUrl}
+                placeholder="输入图片URL或上传图片"
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </form>
+        
+        {/* Attributes */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">属性</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">稀有度</label>
+              <input
+                type="text"
+                value={attributes.rarity}
+                onChange={(e) => handleAttributeChange('rarity', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="例如: 普通, 稀有, 史诗, 传说"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">力量</label>
+              <input
+                type="number"
+                value={attributes.power}
+                onChange={(e) => handleAttributeChange('power', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="输入数值"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">防御</label>
+              <input
+                type="number"
+                value={attributes.defense}
+                onChange={(e) => handleAttributeChange('defense', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="输入数值"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">消耗</label>
+              <input
+                type="number"
+                value={attributes.cost}
+                onChange={(e) => handleAttributeChange('cost', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="输入数值"
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Tags */}
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">标签</h3>
+          <div className="space-y-3">
+            <div className="flex">
+              <input
+                type="text"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="添加新标签"
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+              />
+              <button
+                type="button"
+                onClick={handleAddTag}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              {tags.map(tag => (
+                <span
+                  key={tag.id}
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                  style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
+                >
+                  <Tag className="h-3 w-3 mr-1" />
+                  {tag.name}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTag(tag.id)}
+                    className="ml-2 text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        
+        {/* Submit */}
+        <div className="flex justify-end space-x-3 pt-4">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            取消
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            {card ? '更新卡牌' : '创建卡牌'}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

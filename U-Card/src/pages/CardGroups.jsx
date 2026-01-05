@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCardGroups } from '../hooks/useCardGroups';
-import { getCurrentUserId, ensureUserExists } from '../lib/supabase';
+import { useCardGroupsLocalStorage } from '../hooks/useLocalStorage';
+import { useCardTypesLocalStorage } from '../hooks/useLocalStorage';
 import CardGroup from '../components/CardGroup';
-import { Plus, Lock, Users, Image as ImageIcon, Search, Filter } from 'lucide-react';
-import ImageUpload from '../components/ImageUpload';
+import { Plus, Lock, Users, Image as ImageIcon, Search, Filter, Upload, Download } from 'lucide-react';
 
 const CardGroups = () => {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState(null);
-  const { groups, loading, error, createGroup, updateGroup, deleteGroup } = useCardGroups(userId);
+  const { groups, createGroup, updateGroup, deleteGroup, exportGroups, importGroups } = useCardGroupsLocalStorage();
   const [isCreating, setIsCreating] = useState(false);
   const [editingGroup, setEditingGroup] = useState(null);
   const [groupName, setGroupName] = useState('');
@@ -18,20 +16,6 @@ const CardGroups = () => {
   const [coverImageUrl, setCoverImageUrl] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterVisibility, setFilterVisibility] = useState('');
-  
-  useEffect(() => {
-    const initializeUser = async () => {
-      try {
-        const id = await getCurrentUserId();
-        await ensureUserExists(id);
-        setUserId(id);
-      } catch (err) {
-        console.error('Failed to initialize user:', err);
-      }
-    };
-    
-    initializeUser();
-  }, []);
   
   const handleCreateGroup = async () => {
     if (!groupName.trim()) return;
@@ -75,6 +59,31 @@ const CardGroups = () => {
     }
   };
   
+  const handleExportGroups = () => {
+    exportGroups();
+  };
+  
+  const handleImportGroups = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        importGroups(importedData);
+        alert('卡牌组导入成功！');
+      } catch (err) {
+        console.error('Failed to import groups:', err);
+        alert('导入失败：' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset file input
+    event.target.value = '';
+  };
+  
   const resetForm = () => {
     setIsCreating(false);
     setEditingGroup(null);
@@ -105,31 +114,6 @@ const CardGroups = () => {
     return matchesSearch && matchesVisibility;
   });
   
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
-  
-  if (error) {
-    return (
-      <div className="bg-red-50 border-l-4 border-red-500 p-4 max-w-4xl mx-auto mt-8">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <p className="text-sm text-red-700">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
@@ -137,7 +121,28 @@ const CardGroups = () => {
           <h1 className="text-3xl font-bold text-gray-900">我的卡牌组</h1>
           <p className="mt-2 text-gray-600">管理和组织您的卡牌集合</p>
         </div>
-        <div className="mt-4 md:mt-0">
+        <div className="mt-4 md:mt-0 flex space-x-2">
+          <button
+            onClick={() => document.getElementById('import-groups').click()}
+            className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <Upload className="h-4 w-4 mr-1" />
+            导入
+          </button>
+          <input
+            id="import-groups"
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={handleImportGroups}
+          />
+          <button
+            onClick={handleExportGroups}
+            className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <Download className="h-4 w-4 mr-1" />
+            导出
+          </button>
           <button
             onClick={() => navigate('/groups/create')}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -243,11 +248,13 @@ const CardGroups = () => {
               </div>
               
               <div>
-                <ImageUpload
-                  label="封面图片"
+                <label className="block text-sm font-medium text-gray-700 mb-1">封面图片URL</label>
+                <input
+                  type="text"
                   value={coverImageUrl}
-                  onChange={setCoverImageUrl}
-                  placeholder="输入图片URL或上传图片"
+                  onChange={(e) => setCoverImageUrl(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="输入图片URL"
                 />
               </div>
               

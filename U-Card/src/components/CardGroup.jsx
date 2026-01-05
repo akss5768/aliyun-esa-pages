@@ -2,6 +2,14 @@ import React from 'react';
 import { Heart, Lock, Users, Plus } from 'lucide-react';
 
 const CardGroup = ({ group, onEdit, onDelete, onView }) => {
+  // Mock data for cards in group
+  const mockCards = [
+    { id: 1, image_url: 'https://www.weavefox.cn/api/bolt/unsplash_image?keyword=card&width=100&height=100&random=card_100_100_1' },
+    { id: 2, image_url: 'https://www.weavefox.cn/api/bolt/unsplash_image?keyword=card&width=100&height=100&random=card_100_100_2' },
+    { id: 3, image_url: 'https://www.weavefox.cn/api/bolt/unsplash_image?keyword=card&width=100&height=100&random=card_100_100_3' },
+    { id: 4, image_url: 'https://www.weavefox.cn/api/bolt/unsplash_image?keyword=card&width=100&height=100&random=card_100_100_4' }
+  ];
+
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <div className="p-5">
@@ -27,7 +35,7 @@ const CardGroup = ({ group, onEdit, onDelete, onView }) => {
             {group.cards?.length || 0} 张卡牌
           </span>
           <div className="flex -space-x-2">
-            {group.cards?.slice(0, 4).map((card, index) => (
+            {mockCards.slice(0, 4).map((card, index) => (
               card.image_url ? (
                 <img 
                   key={index}
@@ -44,9 +52,9 @@ const CardGroup = ({ group, onEdit, onDelete, onView }) => {
                 </div>
               )
             ))}
-            {group.cards?.length > 4 && (
+            {mockCards.length > 4 && (
               <div className="h-8 w-8 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center">
-                <span className="text-xs text-gray-500">+{group.cards.length - 4}</span>
+                <span className="text-xs text-gray-500">+{mockCards.length - 4}</span>
               </div>
             )}
           </div>
