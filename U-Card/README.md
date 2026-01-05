@@ -1,6 +1,12 @@
 # U-Card 卡牌收藏管理系统
 
-U-Card 是一个现代化的卡牌收藏管理平台，允许用户创建、组织和管理各种类型的卡牌收藏。支持多种卡牌类型，提供AI辅助生成功能，以及云端同步能力。
+U-Card 是一个现代化的卡牌收藏管理平台，允许用户创建、组织和管理各种类型的卡牌收藏。支持多种卡牌类型，提供AI辅助生成功能，以及本地数据存储能力。
+
+## 声明
+
+本项目由阿里云ESA提供加速、计算和保护  
+![阿里云ESA](aliyun.pngs)
+
 
 ## 功能特性
 
@@ -8,7 +14,7 @@ U-Card 是一个现代化的卡牌收藏管理平台，允许用户创建、组�
 - **卡牌组管理** - 创建和管理多个卡牌组，方便组织和展示卡牌收藏
 - **AI辅助生成** - 基于自然语言描述快速生成卡牌
 - **个性化标签** - 为卡牌添加自定义标签，方便分类和搜索
-- **云端同步** - 使用 Supabase 进行数据存储和同步
+- **本地数据存储** - 使用浏览器 localStorage 进行数据存储，无需服务器
 - **响应式设计** - 完美适配桌面、平板和手机设备
 
 ## 技术栈
@@ -43,7 +49,7 @@ npm install
 
 ### 3. 环境配置
 
-项目使用 Supabase 进行数据存储，当前配置已包含在 `src/lib/supabase.js` 中。如需使用自己的 Supabase 实例，可修改该文件中的配置。
+项目当前使用浏览器 localStorage 进行数据存储，无需额外配置。`src/lib/supabase.js` 文件仅作为兼容性保留，实际数据操作使用本地存储。
 
 ### 4. 启动开发服务器
 
@@ -107,6 +113,16 @@ npm run build
 
 2. 将 `dist/` 目录中的文件部署到您的静态托管服务（如 Netlify、Vercel、GitHub Pages 等）
 
+### 部署到阿里云ESA
+
+项目已配置为可在阿里云ESA平台部署，配置文件 `esa.jsonc` 定义了部署参数：
+
+- **构建命令**: `npm install`
+- **构建输出目录**: `./dist`
+- **404处理策略**: 单页应用模式
+
+要部署到阿里云ESA，只需将项目推送到配置的仓库，ESA将自动构建和部署。
+
 ### 部署到 Vercel
 
 1. 安装 Vercel CLI:
@@ -127,6 +143,8 @@ vercel login
 vercel --prod
 ```
 
+注意：由于项目使用 localStorage，部署后数据将按浏览器隔离存储。如需共享数据，需配置后端服务。
+
 ### 部署到 Netlify
 
 1. 在项目根目录创建 `netlify.toml` 文件:
@@ -144,26 +162,30 @@ vercel --prod
 netlify deploy --prod
 ```
 
-## API 配置
+注意：由于项目使用 localStorage，部署后数据将按浏览器隔离存储。如需共享数据，需配置后端服务。
 
-本项目使用 Supabase 作为后端服务。当前配置信息如下：
+## 数据存储配置
 
-- **Supabase URL**: `https://www.weavefox.cn/api/open/v1/supabase_proxy/1039`
-- **匿名密钥**: 在 `src/lib/supabase.js` 中定义
+本项目使用浏览器 localStorage 作为数据存储方案。当前配置信息如下：
 
-如需使用自己的 Supabase 实例，请更新 `src/lib/supabase.js` 中的配置。
+- **存储方案**: 浏览器 localStorage
+- **兼容性**: `src/lib/supabase.js` 文件仅作为兼容性保留，实际数据操作使用本地存储
 
-## 数据库结构
+如需使用后端服务，请替换 `src/lib/supabase.js` 中的实现。
 
-项目包含以下主要数据表：
+## 数据结构
+
+项目当前使用浏览器 localStorage 存储数据，但保留了完整的数据库迁移文件用于未来后端扩展：
 
 - `users_60959` - 用户表
 - `card_types_60959` - 卡牌类型表
 - `cards_60959` - 卡牌表
+- `card_tags_60959` - 卡牌标签表
+- `card_tag_assignments_60959` - 卡牌标签分配表
 - `card_groups_60959` - 卡牌组表
-- `group_cards_60959` - 组与卡牌关联表
+- `card_group_memberships_60959` - 卡牌组成员表
 
-数据库迁移文件位于 `supabase/migrations/` 目录。
+数据库迁移文件位于 `supabase/migrations/` 目录，可用于后端部署。
 
 ## 开发
 
@@ -181,7 +203,7 @@ netlify deploy --prod
 
 ### Node.js 版本问题
 
-如果遇到 Supabase 相关错误，可能是因为 Node.js 版本过低。建议升级到 Node.js 20.0.0 或更高版本。
+虽然项目使用 localStorage 而非 Supabase，但某些依赖可能仍需要较新版本的 Node.js。如果遇到构建错误，建议升级到 Node.js 18.0.0 或更高版本。
 
 ### 依赖安装问题
 
@@ -200,3 +222,4 @@ npm install
 ## 许可证
 
 [在此处添加许可证信息]
+
