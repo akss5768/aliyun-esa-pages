@@ -221,5 +221,5 @@ npm install
 
 ## 许可证
 
-[在此处添加许可证信息]
 
+该项目遵循以下协议 [MIT license](https://opensource.org/licenses/MIT).
