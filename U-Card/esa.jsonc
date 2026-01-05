@@ -2,7 +2,7 @@
     "name": "U-Card",
     "installCommand": "npm install",
     "assets": {
-        "directory": "./U-Card/dist",
+        "directory": "./dist",
         "notFoundStrategy": "singlePageApplication"
     }
 }
