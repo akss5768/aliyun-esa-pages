@@ -28,8 +28,14 @@ const ChannelManagerPage = () => {
     } else {
       // 默认频道数据
       const initialChannels = [
-        { id: 1, name: '中央电视塔东', url: 'https://gcalic.v.myalicdn.com/gc/ztd_1/index.m3u8', category: 'news' },
-        { id: 2, name: '中央电视塔南', url: 'https://gcalic.v.myalicdn.com/gc/ztn_1/index.m3u8', category: 'sports' },
+        { id: 1, name: '[BD]凤凰卫视', url: 'https://stream1.freetv.fun/e6886dbde2158fbb51da8cd6db21e2bb5fb68f4e5aa4db51e3589f30c20a13d8.m3u8', category: 'news' },
+        { id: 2, name: '中央电视塔东', url: 'https://gcalic.v.myalicdn.com/gc/ztd_1/index.m3u8', category: 'news' },
+        { id: 3, name: '中央电视塔南', url: 'https://gcalic.v.myalicdn.com/gc/ztn_1/index.m3u8', category: 'news' },
+        { id: 4, name: 'Anime (1080p)', url: 'https://shls-live-enc.edgenextcdn.net/out/v1/e7350ddf46c94dddafe14b099394ff56/index.m3u8', category: 'news' },
+        { id: 5, name: 'CGNTV Japan (1080p)', url: 'https://d2p4mrcwl6ly4.cloudfront.net/out/v1/8d50f69fdbbf411a8d302743e4263716/CGNWebLiveJP.m3u8', category: 'news' },
+        { id: 6, name: 'QVC Japan (720p)', url: 'https://cdn-live1.qvc.jp/iPhone/1501/1501.m3u8', category: 'news' },
+        { id: 7, name: 'ABN TV (720p)', url: 'https://vod2.abn.co.kr/IPHONE/abn.m3u8', category: 'news' },
+        { id: 8, name: 'TV Chosun 2 (720p)', url: 'http://onair2.cdn.tvchosun.com/origin2/_definst_/tvchosun_s3/playlist.m3u8', category: 'news' }
       ];
       setChannels(initialChannels);
       localStorage.setItem('channels', JSON.stringify(initialChannels));
