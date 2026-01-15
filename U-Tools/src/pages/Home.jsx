@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Code, Calendar, FileText, Key, Timer, Regex } from 'lucide-react';
+import { Heart, Code, Calendar, FileText, Key, Timer, Regex, Hash, Link as LinkIcon, Globe } from 'lucide-react';
 
 const Home = () => {
   const [favorites, setFavorites] = useState([]);
@@ -59,6 +59,27 @@ const Home = () => {
       description: '高亮显示两段文本的差异', 
       icon: FileText,
       category: '文本工具'
+    },
+    { 
+      id: 'md5', 
+      name: 'MD5生成', 
+      description: '生成文本的MD5哈希值', 
+      icon: Hash,
+      category: '安全工具'
+    },
+    { 
+      id: 'url', 
+      name: 'URL格式化', 
+      description: 'URL编码、解码和规范化处理', 
+      icon: LinkIcon,
+      category: '开发工具'
+    },
+    { 
+      id: 'unicode', 
+      name: 'Unicode转换', 
+      description: 'Unicode编码与解码转换', 
+      icon: Globe,
+      category: '开发工具'
     }
   ];
 

@@ -8,6 +8,9 @@ import RegexTool from '../components/tools/RegexTool';
 import UUIDTool from '../components/tools/UUIDTool';
 import JWTTool from '../components/tools/JWTTool';
 import DiffTool from '../components/tools/DiffTool';
+import MD5Tool from '../components/tools/MD5Tool';
+import URLTool from '../components/tools/URLTool';
+import UnicodeTool from '../components/tools/UnicodeTool';
 
 const ToolPage = () => {
   const { toolId } = useParams();
@@ -49,6 +52,21 @@ const ToolPage = () => {
       name: '文本对比', 
       component: DiffTool,
       description: '对比两段文本的差异'
+    },
+    md5: { 
+      name: 'MD5生成', 
+      component: MD5Tool,
+      description: '生成文本的MD5哈希值'
+    },
+    url: { 
+      name: 'URL格式化', 
+      component: URLTool,
+      description: 'URL编码、解码和规范化处理'
+    },
+    unicode: { 
+      name: 'Unicode转换', 
+      component: UnicodeTool,
+      description: 'Unicode编码与解码转换'
     }
   };
   
