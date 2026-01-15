@@ -23,13 +23,13 @@ U-Card 是一个现代化的卡牌收藏管理平台，允许用户创建、组�
 - **路由**: React Router
 - **UI样式**: Tailwind CSS
 - **状态管理**: React Hooks
-- **数据库**: Supabase (PostgreSQL)
+- **数据库**: LocalStorage
 - **构建工具**: Vite
 - **图标库**: Lucide React
 
 ## 环境要求
 
-- Node.js >= 18.0.0 (推荐使用 Node.js >= 20.0.0 以获得最佳 Supabase 支持)
+- Node.js >= 18.0.0 (推荐使用 Node.js >= 20.0.0 以获得最佳 localStorage 支持)
 - npm 或 yarn
 
 ## 安装和启动
@@ -49,7 +49,7 @@ npm install
 
 ### 3. 环境配置
 
-项目当前使用浏览器 localStorage 进行数据存储，无需额外配置。`src/lib/supabase.js` 文件仅作为兼容性保留，实际数据操作使用本地存储。
+项目当前使用浏览器 localStorage 进行数据存储，无需额外配置。`src/lib/localStorage.js` 文件仅作为兼容性保留，实际数据操作使用本地存储。
 
 ### 4. 启动开发服务器
 
@@ -88,7 +88,7 @@ src/
 │   ├── useCardTypes.js  # 卡牌类型数据获取Hook
 │   └── useCards.js      # 卡牌数据获取Hook
 ├── lib/                # 工具库和配置
-│   └── supabase.js      # Supabase 客户端配置
+│   └── localStorage.js      # localStorage 客户端配置
 ├── pages/              # 页面组件
 │   ├── AIGenerator.jsx  # AI生成器页面
 │   ├── CardGroups.jsx   # 卡牌组列表页面
@@ -169,9 +169,9 @@ netlify deploy --prod
 本项目使用浏览器 localStorage 作为数据存储方案。当前配置信息如下：
 
 - **存储方案**: 浏览器 localStorage
-- **兼容性**: `src/lib/supabase.js` 文件仅作为兼容性保留，实际数据操作使用本地存储
+- **兼容性**: `src/lib/localStorage.js` 文件仅作为兼容性保留，实际数据操作使用本地存储
 
-如需使用后端服务，请替换 `src/lib/supabase.js` 中的实现。
+如需使用后端服务，请替换 `src/lib/localStorage.js` 中的实现。
 
 ## 数据结构
 
@@ -185,7 +185,7 @@ netlify deploy --prod
 - `card_groups_60959` - 卡牌组表
 - `card_group_memberships_60959` - 卡牌组成员表
 
-数据库迁移文件位于 `supabase/migrations/` 目录，可用于后端部署。
+数据库迁移文件位于 `localStorage/migrations/` 目录，可用于后端部署。
 
 ## 开发
 
@@ -203,7 +203,7 @@ netlify deploy --prod
 
 ### Node.js 版本问题
 
-虽然项目使用 localStorage 而非 Supabase，但某些依赖可能仍需要较新版本的 Node.js。如果遇到构建错误，建议升级到 Node.js 18.0.0 或更高版本。
+虽然项目使用 localStorage 而非 localStorage，但某些依赖可能仍需要较新版本的 Node.js。如果遇到构建错误，建议升级到 Node.js 18.0.0 或更高版本。
 
 ### 依赖安装问题
 
