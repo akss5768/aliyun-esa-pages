@@ -1,0 +1,32 @@
+作品访问地址:
+https://u-tools.39b9884f.er.ali.aliyun-esa.net/
+
+github仓库地址:
+https://github.com/akss5768/aliyun-esa-pages/tree/main/U-Tools
+
+
+作品说明:
+# U-Tools 开发者工具箱
+
+U-Tools 是一个一站式的开发者工具平台，提供多种实用工具，包括JSON格式化、时间戳转换、正则表达式测试、UUID生成、JWT解析、文本对比等。免安装、免注册，即开即用。
+
+## 功能特性
+
+- **JSON校验与格式化** - 校验JSON语法并美化格式化显示
+- **时间戳转换** - Unix时间戳与日期时间相互转换
+- **Crontab解析** - 解析和计算定时任务执行时间
+- **正则表达式测试** - 实时测试正则表达式的匹配结果
+- **UUID生成** - 生成标准格式的UUID字符串
+- **JWT解析** - 解析和验证JWT Token内容
+- **文本对比** - 高亮显示两段文本的差异
+- **响应式设计** - 完美适配桌面、平板和手机设备
+
+## 技术栈
+
+- **前端框架**: React 18
+- **路由**: React Router
+- **UI样式**: Tailwind CSS
+- **状态管理**: React Hooks
+- **数据存储**: LocalStorage
+- **构建工具**: Vite
+- **图标库**: Lucide React
