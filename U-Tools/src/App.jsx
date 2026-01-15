@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import ToolPage from './pages/ToolPage';
 import Favorites from './pages/Favorites';
 import History from './pages/History';
+import SearchResults from './pages/SearchResults';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -38,6 +39,7 @@ const App = () => {
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/history" element={<History />} />
             <Route path="/tools/:toolId" element={<ToolPage />} />
+            <Route path="/search" element={<SearchResults />} />
           </Routes>
         </main>
         <Footer />
