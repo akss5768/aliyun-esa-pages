@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Copy, Check } from 'lucide-react';
 
 const MD5Tool = () => {
@@ -8,7 +8,15 @@ const MD5Tool = () => {
   const [error, setError] = useState('');
 
   // 引入 crypto-js 的 MD5 功能
-  const CryptoJS = typeof window !== 'undefined' ? require('crypto-js') : null;
+  const [CryptoJS, setCryptoJS] = useState(null);
+  
+  useEffect(() => {
+    import('crypto-js').then(module => {
+      setCryptoJS(module.default || module);
+    }).catch(() => {
+      setError('加密库加载失败，请刷新页面重试');
+    });
+  }, []);
 
   const generateMD5 = () => {
     if (!CryptoJS) {

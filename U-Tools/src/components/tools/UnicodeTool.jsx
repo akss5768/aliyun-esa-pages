@@ -260,7 +260,7 @@ const UnicodeTool = () => {
           </div>
           <div>
             <h4 className="font-medium text-gray-700 dark:text-gray-200 mb-1">JS转义转文本</h4>
-            <p>将 JavaScript Unicode 转义序列（\u{X} 格式）还原为原始文本。</p>
+            <p>将 JavaScript Unicode 转义序列（\uXXXX 格式）还原为原始文本。</p>
           </div>
         </div>
       </div>
