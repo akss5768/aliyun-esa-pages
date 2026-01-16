@@ -1,5 +1,5 @@
 {
-    "name": "U-Card",
+    "name": "U-Sample",
     "installCommand": "npm install",
     "assets": {
         "directory": "./dist",
