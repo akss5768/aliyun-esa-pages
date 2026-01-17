@@ -14,25 +14,25 @@ const Header = ({ title, showNewButton = false, onExport }) => {
         </div>
         
         <div className="flex items-center space-x-2">
+          {showNewButton && (
+            <Link 
+              to="/note/new"
+              className="flex items-center space-x-1 bg-[#f9a7d4] text-white px-4 py-2 rounded-full hover:bg-pink-400 transition-all duration-200 hover:scale-105 shadow-sm"
+            >
+              <PlusIcon size={16} />
+              <span>新建</span>
+            </Link>
+          )}
+          
           {onExport && (
             <button
               onClick={onExport}
-              className="flex items-center space-x-1 bg-[#FF6B8C] text-white px-4 py-2 rounded-full hover:bg-pink-600 transition-all duration-200 hover:scale-105 shadow-sm"
+              className="flex items-center space-x-1 bg-[#f9a7d4] text-white px-4 py-2 rounded-full hover:bg-pink-400 transition-all duration-200 hover:scale-105 shadow-sm"
               title="导出笔记"
             >
               <DownloadIcon size={16} />
               <span>导出</span>
             </button>
-          )}
-          
-          {showNewButton && (
-            <Link 
-              to="/note/new"
-              className="flex items-center space-x-1 bg-[#FFB7C5] text-white px-4 py-2 rounded-full hover:bg-pink-400 transition-all duration-200 hover:scale-105 shadow-sm"
-            >
-              <PlusIcon size={16} />
-              <span>新建</span>
-            </Link>
           )}
         </div>
       </div>
