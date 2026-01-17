@@ -1,0 +1,29 @@
+作品访问地址:
+https://aliyun-esa-pages.39b9884f.er.aliyun-esa.net/
+
+github仓库地址:
+https://github.com/akss5768/aliyun-esa-pages/tree/main/U-Note
+
+
+作品说明:
+# U-Note 轻量级笔记管理系统
+
+U-Note 是一个现代化的轻量级笔记管理平台，允许用户创建、组织和管理个人笔记。基于浏览器localStorage实现数据存储，无需服务器，完全轻量化设计。
+
+## 功能特性
+
+- **轻量级设计** - 无后端依赖，纯前端SPA应用，体积小巧
+- **本地数据存储** - 使用浏览器 localStorage 进行数据存储，安全可靠
+- **响应式设计** - 完美适配桌面、平板和手机设备
+- **便捷编辑** - 支持笔记的增删改查功能
+- **快速部署** - 静态文件部署，一键发布
+
+## 技术栈
+
+- **前端框架**: React 18
+- **路由**: React Router
+- **UI样式**: Tailwind CSS 3.4.14
+- **状态管理**: React Hooks
+- **存储方案**: 浏览器localStorage
+- **构建工具**: Vite
+- **图标库**: Lucide React
