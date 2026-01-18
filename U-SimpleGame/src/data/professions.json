@@ -1,0 +1,37 @@
+[
+  {
+    "name": "绸缎铺老板",
+    "wealth": 20,
+    "mood": 10,
+    "health": 15,
+    "image": "/images/professions/silk-merchant.jpg"
+  },
+  {
+    "name": "茶商",
+    "wealth": 15,
+    "mood": 15,
+    "health": 10,
+    "image": "/images/professions/tea-merchant.jpg"
+  },
+  {
+    "name": "药材商",
+    "wealth": 10,
+    "mood": 20,
+    "health": 15,
+    "image": "/images/professions/herbal-merchant.jpg"
+  },
+  {
+    "name": "书商",
+    "wealth": 5,
+    "mood": 25,
+    "health": 10,
+    "image": "/images/professions/book-merchant.jpg"
+  },
+  {
+    "name": "瓷器商",
+    "wealth": 25,
+    "mood": 5,
+    "health": 20,
+    "image": "/images/professions/pottery-merchant.jpg"
+  }
+]

@@ -27,6 +27,18 @@ https://github.com/akss5768/aliyun-esa-pages/tree/main/U-SimpleGame
 - **路由**: React Router
 - **UI样式**: Tailwind CSS
 - **状态管理**: React Hooks
-- **数据库**: Supabase (PostgreSQL)
+- **数据存储**: LocalStorage
 - **构建工具**: Vite
 - **图标库**: Lucide React
+
+## 数据配置
+
+项目中的静态数据已拆分为独立的JSON文件，位于 `src/data/` 目录下，以提高可维护性：
+
+- `dynasties.json` - 朝代配置数据，包含各朝代的ID、名称、描述和背景图片路径
+- `regions.json` - 地区配置数据，包含不同地区的ID、名称、描述、价格调节器等信息
+- `professions.json` - 职业配置数据，包含各职业的初始属性加成（财富、心情、健康）和图片路径
+- `items.json` - 商品配置数据，包含游戏中各类商品的基础价格、库存和图片路径
+- `events.json` - 事件配置数据，包含随机事件的标题、描述、影响效果和图片路径
+
+这些数据文件采用模块化设计，便于调整游戏平衡性和扩展新内容。

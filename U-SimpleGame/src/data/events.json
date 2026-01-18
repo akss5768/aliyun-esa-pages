@@ -1,0 +1,44 @@
+[
+  {
+    "id": "war",
+    "title": "边关战事频仍！",
+    "description": "朝廷下令筹措军粮，粮食价格大涨！同时征兵令使市面萧条...",
+    "image": "/images/events/war-event.jpg",
+    "effects": [
+      { "stat": "wealth", "value": 30 },
+      { "stat": "mood", "value": -15 },
+      { "stat": "health", "value": -5 }
+    ]
+  },
+  {
+    "id": "flood",
+    "title": "夏季洪涝成灾",
+    "description": "连日暴雨引发洪灾，农田受损严重，稻米价格飞涨...",
+    "image": "/images/events/flood-event.jpg",
+    "effects": [
+      { "stat": "wealth", "value": -20 },
+      { "stat": "mood", "value": -10 },
+      { "stat": "health", "value": -15 }
+    ]
+  },
+  {
+    "id": "policy",
+    "title": "朝廷新税令",
+    "description": "新政减轻商税，市场交易活跃，各类商品价格略有下降...",
+    "image": "/images/events/policy-event.jpg",
+    "effects": [
+      { "stat": "wealth", "value": 15 },
+      { "stat": "mood", "value": 10 }
+    ]
+  },
+  {
+    "id": "festival",
+    "title": "传统佳节将至",
+    "description": "节日临近，民众采购年货，丝绸、瓷器等商品需求大增...",
+    "image": "/images/events/festival-event.jpg",
+    "effects": [
+      { "stat": "wealth", "value": 25 },
+      { "stat": "mood", "value": 20 }
+    ]
+  }
+]

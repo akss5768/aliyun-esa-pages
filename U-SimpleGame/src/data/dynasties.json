@@ -1,0 +1,26 @@
+[
+  {
+    "id": "tang",
+    "name": "唐朝·贞观盛世",
+    "description": "开放包容，商贸繁荣的时代",
+    "image": "/images/dynasties/tang-dynasty.jpg"
+  },
+  {
+    "id": "song",
+    "name": "宋朝·汴京晨曦",
+    "description": "文化昌盛，商业发达的时代",
+    "image": "/images/dynasties/song-dynasty.jpg"
+  },
+  {
+    "id": "ming",
+    "name": "明朝·永乐雄风",
+    "description": "海陆并进，国力强盛的时代",
+    "image": "/images/dynasties/ming-dynasty.jpg"
+  },
+  {
+    "id": "qing",
+    "name": "清朝·康乾繁景",
+    "description": "版图辽阔，经济繁荣的时代",
+    "image": "/images/dynasties/qing-dynasty.jpg"
+  }
+]

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/Dialog';
 import { Button } from '../ui/Button';
+import { ImagePlaceholder } from '../ui/ImagePlaceholder';
 
 const EventModal = ({ event, onClose }) => {
   return (
@@ -12,9 +13,10 @@ const EventModal = ({ event, onClose }) => {
         
         <div className="flex flex-col items-center">
           <div className="rounded-lg overflow-hidden w-full h-48 mb-4">
-            <img 
-              src={`https://www.weavefox.cn/api/bolt/unsplash_image?keyword=${encodeURIComponent(event.imageKeyword)}&width=600&height=300&random=event_${event.id}`} 
+            <ImagePlaceholder 
+              type="event"
               alt={event.title}
+              src={event.image}
               className="w-full h-full object-cover"
             />
           </div>

@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 
+import regionsData from '../data/regions.json';
+import professionsData from '../data/professions.json';
+import { ImagePlaceholder } from '../components/ui/ImagePlaceholder';
+
 const CharacterCreation = () => {
   const navigate = useNavigate();
   const [character, setCharacter] = useState(null);
@@ -19,23 +23,9 @@ const CharacterCreation = () => {
       qing: '清朝'
     };
     
-    const regions = [
-      { id: 'jiangnan', name: '江南水乡', description: '鱼米之乡，商贸发达' },
-      { id: 'saibei', name: '塞外边疆', description: '民风彪悍，资源丰富' },
-      { id: 'zhongyuan', name: '中原腹地', description: '文化中心，交通要道' }
-    ];
-    
-    const professions = [
-      { name: '绸缎铺老板', wealth: 20, mood: 10, health: 15 },
-      { name: '茶商', wealth: 15, mood: 15, health: 10 },
-      { name: '药材商', wealth: 10, mood: 20, health: 15 },
-      { name: '书商', wealth: 5, mood: 25, health: 10 },
-      { name: '瓷器商', wealth: 25, mood: 5, health: 20 }
-    ];
-    
     const selectedDynasty = localStorage.getItem('selectedDynasty') || 'tang';
-    const region = regions[Math.floor(Math.random() * regions.length)];
-    const profession = professions[Math.floor(Math.random() * professions.length)];
+    const region = regionsData[Math.floor(Math.random() * regionsData.length)];
+    const profession = professionsData[Math.floor(Math.random() * professionsData.length)];
     
     setCharacter({
       dynasty: dynasties[selectedDynasty],
@@ -74,9 +64,10 @@ const CharacterCreation = () => {
               <h2 className="text-2xl font-bold text-amber-900 mb-4">家庭背景</h2>
               <div className="flex items-center mb-4">
                 <div className="mr-4 flex-shrink-0">
-                  <img 
-                    src={`https://www.weavefox.cn/api/bolt/unsplash_image?keyword=${encodeURIComponent(character.profession.name)}&width=150&height=150&random=profession_${character.profession.name}`} 
+                  <ImagePlaceholder 
+                    type="profession"
                     alt={character.profession.name}
+                    src={character.profession.image}
                     className="w-24 h-24 rounded-full object-cover border-2 border-amber-500"
                   />
                 </div>

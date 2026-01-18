@@ -2,6 +2,8 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/Dialog';
 import { Button } from '../ui/Button';
 
+import itemsData from '../../data/items.json';
+
 const MarketPanel = ({ market, onTrade, onClose }) => {
   return (
     <Dialog open onOpenChange={onClose}>

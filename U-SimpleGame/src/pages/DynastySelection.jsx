@@ -3,15 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 
+import dynastiesData from '../data/dynasties.json';
+import { ImagePlaceholder } from '../components/ui/ImagePlaceholder';
+
 const DynastySelection = () => {
   const navigate = useNavigate();
   
-  const dynasties = [
-    { id: 'tang', name: '唐朝·贞观盛世', description: '开放包容，商贸繁荣的时代' },
-    { id: 'song', name: '宋朝·汴京晨曦', description: '文化昌盛，商业发达的时代' },
-    { id: 'ming', name: '明朝·永乐雄风', description: '海陆并进，国力强盛的时代' },
-    { id: 'qing', name: '清朝·康乾繁景', description: '版图辽阔，经济繁荣的时代' }
-  ];
+  const dynasties = dynastiesData;
   
   const handleSelect = (dynastyId) => {
     // 保存选择的朝代到本地存储
@@ -36,9 +34,10 @@ const DynastySelection = () => {
             <h2 className="text-2xl font-bold text-amber-900 mb-3">{dynasty.name}</h2>
             <p className="text-amber-700 text-lg mb-4">{dynasty.description}</p>
             <div className="mt-4 h-40 rounded-lg overflow-hidden border border-amber-700 shadow-md">
-              <img 
-                src={`https://www.weavefox.cn/api/bolt/unsplash_image?keyword=${encodeURIComponent(dynasty.name)}&width=400&height=200&random=${dynasty.id}_bg`} 
+              <ImagePlaceholder 
+                type="dynasty"
                 alt={dynasty.name}
+                src={dynasty.image}
                 className="w-full h-full object-cover"
               />
             </div>

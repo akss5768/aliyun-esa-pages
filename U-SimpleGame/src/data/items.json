@@ -1,0 +1,23 @@
+[
+  {
+    "id": "rice",
+    "name": "稻米",
+    "basePrice": 15,
+    "inventory": 100,
+    "image": "/images/items/rice.jpg"
+  },
+  {
+    "id": "silk",
+    "name": "丝绸",
+    "basePrice": 80,
+    "inventory": 50,
+    "image": "/images/items/silk.jpg"
+  },
+  {
+    "id": "pottery",
+    "name": "陶器",
+    "basePrice": 30,
+    "inventory": 80,
+    "image": "/images/items/pottery.jpg"
+  }
+]
