@@ -1,0 +1,8 @@
+{
+    "name": "U-AIGC-Yellow-Pages",
+    "installCommand": "npm install",
+    "assets": {
+        "directory": "./dist",
+        "notFoundStrategy": "singlePageApplication"
+    }
+}

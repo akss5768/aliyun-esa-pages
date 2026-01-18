@@ -1,0 +1,30 @@
+作品访问地址:
+https://u-aigc.39b9884f.er.aliyun-esa.net/
+
+github仓库地址:
+https://github.com/akss5768/aliyun-esa-pages/tree/main/U-AIGC
+
+
+作品说明:
+# U-AIGC AI工具导航
+
+U-AIGC 是一个现代化的AI工具导航平台，汇集了各类AI工具，包括AI绘画、AI写作、AI视频等，为用户提供便捷的AI工具查找和使用服务。采用轻量化设计，基于localStorage存储，开箱即用。
+
+## 功能特性
+
+- **多类型AI工具支持** - 支持AI绘画、AI写作、AI视频等多种类型的AI工具
+- **分类浏览** - 按照功能分类整理AI工具，便于用户快速查找
+- **智能搜索** - 提供便捷的搜索功能，快速定位所需AI工具
+- **书签收藏** - 支持收藏常用AI工具，方便快速访问
+- **本地数据存储** - 使用浏览器 localStorage 进行数据存储，无需服务器
+- **响应式设计** - 完美适配桌面、平板和手机设备
+
+## 技术栈
+
+- **前端框架**: React 18
+- **路由**: React Router
+- **UI样式**: Tailwind CSS
+- **状态管理**: React Hooks
+- **数据存储**: LocalStorage
+- **构建工具**: Vite
+- **图标库**: Lucide React
