@@ -92,6 +92,19 @@ const ItemDetail = () => {
         {/* 编辑表单 */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
           <div className="mb-5">
+            <Label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              物品名称
+            </Label>
+            <input 
+              id="name"
+              type="text"
+              value={editedItem.name || ''}
+              onChange={(e) => setEditedItem({...editedItem, name: e.target.value})}
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg py-3 px-4"
+              placeholder="输入物品名称"
+            />
+          </div>
+          <div className="mb-5">
             <Label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
               物品类型
             </Label>
