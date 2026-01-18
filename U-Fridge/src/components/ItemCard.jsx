@@ -30,7 +30,7 @@ const ItemCard = ({ item }) => {
         <h3 className="font-medium text-gray-800 truncate">{item.name}</h3>
         <div className="mt-2 flex items-center justify-between">
           <span className="text-sm text-gray-500">
-            {safeFormatDate(item.expiryDate, 'yyyy年MM月dd日')}
+            {safeFormatDate(item.expiryDate, 'MM月dd日')}
           </span>
           <div className={`flex items-center px-2 py-1 rounded-full ${statusInfo.bg}`}>
             <IconComponent className={statusInfo.color} size={14} />
