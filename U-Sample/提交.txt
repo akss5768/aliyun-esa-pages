@@ -25,6 +25,6 @@ U-Card 是一个现代化的卡牌收藏管理平台，允许用户创建、组�
 - **路由**: React Router
 - **UI样式**: Tailwind CSS
 - **状态管理**: React Hooks
-- **数据库**: Supabase (PostgreSQL)
+- **数据库**: LocalStorage
 - **构建工具**: Vite
 - **图标库**: Lucide React

@@ -40,7 +40,7 @@ U-Tools 是一个一站式的开发者工具平台，提供多种实用工具，
 
 ```bash
 git clone <repository-url>
-cd U-Card
+cd U-Tools
 ```
 
 ### 2. 安装依赖
