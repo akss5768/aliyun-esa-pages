@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { Button } from '../components/ui/Button';
 import { Camera, Image as ImageIcon } from 'lucide-react';
+import dbUtils from '../utils/dbUtils';
 
 const Upload = () => {
   const navigate = useNavigate();
@@ -10,26 +11,35 @@ const Upload = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   
   // 模拟AI识别过程
-  const processImage = (file) => {
+  const processImage = async (file) => {
     setIsProcessing(true);
     
-    // 模拟API调用延迟
-    setTimeout(() => {
-      const mockItems = [
-        {
-          id: Date.now(),
-          image: URL.createObjectURL(file),
-          name: '牛奶',
-          category: 'dairy',
-          addedDate: new Date().toISOString(),
-          expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7天后过期
-          notes: ''
-        }
-      ];
+    try {
+      // 将文件转换为base64
+      const base64Image = await dbUtils.fileToBase64(file);
       
-      setItems(mockItems);
+      // 模拟API调用延迟
+      setTimeout(() => {
+        const mockItems = [
+          {
+            id: Date.now(),
+            image: base64Image,
+            name: '牛奶',
+            category: 'dairy',
+            addedDate: new Date().toISOString(),
+            expiryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7天后过期
+            notes: ''
+          }
+        ];
+        
+        setItems(mockItems);
+        setIsProcessing(false);
+      }, 1500);
+    } catch (error) {
+      console.error('图片处理失败:', error);
       setIsProcessing(false);
-    }, 1500);
+      alert('图片处理失败，请重试');
+    }
   };
   
   // 处理文件选择
@@ -46,13 +56,17 @@ const Upload = () => {
   };
   
   // 保存物品
-  const saveItems = () => {
-    const savedItems = localStorage.getItem('fridgeItems');
-    const existingItems = savedItems ? JSON.parse(savedItems) : [];
-    const updatedItems = [...existingItems, ...items];
-    
-    localStorage.setItem('fridgeItems', JSON.stringify(updatedItems));
-    navigate('/');
+  const saveItems = async () => {
+    try {
+      // 逐个保存物品到IndexedDB
+      for (const item of items) {
+        await dbUtils.addItem(item);
+      }
+      navigate('/');
+    } catch (error) {
+      console.error('保存物品失败:', error);
+      alert('保存物品失败，请重试');
+    }
   };
   
   return (

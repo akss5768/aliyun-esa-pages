@@ -2,17 +2,24 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import ItemCard from '../components/ItemCard';
 import { Button } from '../components/ui/Button';
+import dbUtils from '../utils/dbUtils';
 
 const Home = () => {
   const [items, setItems] = useState([]);
   const [filter, setFilter] = useState('all');
   
-  // 从localStorage加载数据
+  // 从IndexedDB加载数据
   useEffect(() => {
-    const savedItems = localStorage.getItem('fridgeItems');
-    if (savedItems) {
-      setItems(JSON.parse(savedItems));
-    }
+    const loadItems = async () => {
+      try {
+        const savedItems = await dbUtils.getAllItems();
+        setItems(savedItems);
+      } catch (error) {
+        console.error('加载物品失败:', error);
+      }
+    };
+    
+    loadItems();
   }, []);
   
   // 过滤物品

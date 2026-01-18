@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { safeFormatDate } from '../utils/dateUtils';
 import { AlertTriangle, XCircle } from 'lucide-react';
+import dbUtils from '../utils/dbUtils';
 
 const Notifications = () => {
   const navigate = useNavigate();
@@ -10,54 +11,59 @@ const Notifications = () => {
   
   // 生成提醒通知
   useEffect(() => {
-    const savedItems = localStorage.getItem('fridgeItems');
-    if (savedItems) {
-      const items = JSON.parse(savedItems);
-      const today = new Date();
+    const loadNotifications = async () => {
+      try {
+        const items = await dbUtils.getAllItems();
+        const today = new Date();
+          
+        // 过滤出即将过期和已过期的物品
+        const expiringItems = items.filter(item => {
+          const expiryDate = new Date(item.expiryDate);
+          // 检查日期是否有效
+          if (isNaN(expiryDate.getTime())) return false;
+            
+          const diffTime = expiryDate - today;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+          // 提前1-2天提醒或已过期
+          return diffDays <= 2;
+        });
+          
+        // 生成通知数据
+        const notificationData = expiringItems.map(item => {
+          const expiryDate = new Date(item.expiryDate);
+          const diffTime = expiryDate - today;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+          let status, message;
+          if (diffDays < 0) {
+            status = 'expired';
+            message = '今天已过期';
+          } else if (diffDays === 0) {
+            status = 'expiring';
+            message = '今天过期';
+          } else {
+            status = 'expiring';
+            message = `将在${diffDays}天后过期`; 
+          }
+            
+          return {
+            id: item.id,
+            image: item.image,
+            name: item.name,
+            message,
+            status,
+            date: item.expiryDate
+          };
+        });
+          
+        setNotifications(notificationData);
+      } catch (error) {
+        console.error('加载提醒通知失败:', error);
+      }
+    };
       
-      // 过滤出即将过期和已过期的物品
-      const expiringItems = items.filter(item => {
-        const expiryDate = new Date(item.expiryDate);
-        // 检查日期是否有效
-        if (isNaN(expiryDate.getTime())) return false;
-        
-        const diffTime = expiryDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        // 提前1-2天提醒或已过期
-        return diffDays <= 2;
-      });
-      
-      // 生成通知数据
-      const notificationData = expiringItems.map(item => {
-        const expiryDate = new Date(item.expiryDate);
-        const diffTime = expiryDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        let status, message;
-        if (diffDays < 0) {
-          status = 'expired';
-          message = '今天已过期';
-        } else if (diffDays === 0) {
-          status = 'expiring';
-          message = '今天过期';
-        } else {
-          status = 'expiring';
-          message = `将在${diffDays}天后过期`;
-        }
-        
-        return {
-          id: item.id,
-          image: item.image,
-          name: item.name,
-          message,
-          status,
-          date: item.expiryDate
-        };
-      });
-      
-      setNotifications(notificationData);
-    }
+    loadNotifications();
   }, []);
   
   return (

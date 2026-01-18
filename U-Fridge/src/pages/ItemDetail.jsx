@@ -6,6 +6,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 import { Label } from '../components/ui/Label';
 import { safeFormatDate } from '../utils/dateUtils';
 import { Trash2, Calendar } from 'lucide-react';
+import dbUtils from '../utils/dbUtils';
 
 const ItemDetail = () => {
   const { id } = useParams();
@@ -25,41 +26,41 @@ const ItemDetail = () => {
   
   // 加载物品详情
   useEffect(() => {
-    const savedItems = localStorage.getItem('fridgeItems');
-    if (savedItems) {
-      const items = JSON.parse(savedItems);
-      const foundItem = items.find(item => item.id === parseInt(id));
-      if (foundItem) {
-        setItem(foundItem);
-        setEditedItem({ ...foundItem });
+    const loadItem = async () => {
+      try {
+        const foundItem = await dbUtils.getItemById(parseInt(id));
+        if (foundItem) {
+          setItem(foundItem);
+          setEditedItem({ ...foundItem });
+        }
+      } catch (error) {
+        console.error('加载物品详情失败:', error);
       }
-    }
+    };
+    
+    loadItem();
   }, [id]);
   
   // 保存修改
-  const saveChanges = () => {
-    const savedItems = localStorage.getItem('fridgeItems');
-    if (savedItems) {
-      const items = JSON.parse(savedItems);
-      const updatedItems = items.map(item => 
-        item.id === parseInt(id) ? editedItem : item
-      );
-      
-      localStorage.setItem('fridgeItems', JSON.stringify(updatedItems));
+  const saveChanges = async () => {
+    try {
+      await dbUtils.addItem(editedItem);
       navigate('/');
+    } catch (error) {
+      console.error('保存修改失败:', error);
+      alert('保存修改失败，请重试');
     }
   };
   
   // 删除物品
-  const deleteItem = () => {
+  const deleteItem = async () => {
     if (window.confirm('确定要删除这个物品吗？')) {
-      const savedItems = localStorage.getItem('fridgeItems');
-      if (savedItems) {
-        const items = JSON.parse(savedItems);
-        const updatedItems = items.filter(item => item.id !== parseInt(id));
-        
-        localStorage.setItem('fridgeItems', JSON.stringify(updatedItems));
+      try {
+        await dbUtils.deleteItem(parseInt(id));
         navigate('/');
+      } catch (error) {
+        console.error('删除物品失败:', error);
+        alert('删除物品失败，请重试');
       }
     }
   };
