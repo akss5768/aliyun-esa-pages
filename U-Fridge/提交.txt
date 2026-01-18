@@ -1,0 +1,29 @@
+作品访问地址:
+https://u-fridge.39b9884f.er.aliyun-esa.net/
+
+github仓库地址:
+https://github.com/akss5768/aliyun-esa-pages/tree/main/U-Fridge
+
+
+作品说明:
+# U-Fridge 冰箱物品管理系统
+
+U-Fridge 是一个现代化的冰箱物品管理平台，允许用户添加、组织和管理冰箱中的各类食品。支持拍照识别、保质期跟踪、分类管理等功能。
+
+## 功能特性
+
+- **拍照识别添加** - 通过拍照快速添加冰箱物品
+- **保质期跟踪** - 自动计算和显示物品保质期
+- **多类别管理** - 支持蔬菜、水果、乳制品、饮料、肉类等多种食品分类
+- **本地数据存储** - 使用浏览器 localStorage 进行数据存储，无需服务器
+- **响应式设计** - 完美适配桌面、平板和手机设备
+
+## 技术栈
+
+- **前端框架**: React 18
+- **路由**: React Router
+- **UI样式**: Tailwind CSS
+- **状态管理**: React Hooks
+- **数据存储**: LocalStorage
+- **构建工具**: Vite
+- **图标库**: Lucide React
