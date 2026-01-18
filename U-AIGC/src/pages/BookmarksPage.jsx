@@ -109,7 +109,10 @@ const BookmarksPage = ({ bookmarks, toggleBookmark, sites, categories }) => {
             <>
               <div className="grid grid-cols-1 gap-4 mb-8">
                 {currentSites.map((site) => {
-                  const category = getCategoryForSite(site.id);
+                  const originalSite = sites.find(s => s.id === site.id);
+                  const category = originalSite && originalSite.classify && originalSite.classify.length > 0 
+                    ? categories.find(cat => cat.id === originalSite.classify[0]) 
+                    : null;
                   return (
                     <div 
                       key={site.id}

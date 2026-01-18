@@ -29,9 +29,14 @@ const SearchPage = ({ sites, categories, bookmarks, toggleBookmark, isBookmarked
   };
   
   // 获取站点所属分类名称
-  const getCategoryName = (categoryId) => {
-    const category = categories.find(cat => cat.id === categoryId);
-    return category ? category.name : '未知分类';
+  const getCategoryNames = (categoryIds) => {
+    if (!categoryIds || !Array.isArray(categoryIds)) {
+      return '未知分类';
+    }
+    return categoryIds.map(id => {
+      const category = categories.find(cat => cat.id === id);
+      return category ? category.name : '未知分类';
+    }).join(', ');
   };
 
   return (
@@ -118,7 +123,7 @@ const SearchPage = ({ sites, categories, bookmarks, toggleBookmark, isBookmarked
                       </button>
                     </div>
                     <div className="mt-2 text-xs text-gray-500">
-                      分类: {site.classify && site.classify.map(catId => getCategoryName(catId)).join(', ')}
+                      分类: {getCategoryNames(site.classify)}
                     </div>
                   </div>
                 ))}
